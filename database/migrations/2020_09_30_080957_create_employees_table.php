@@ -19,7 +19,7 @@ class CreateEmployeesTable extends Migration
             $table->string('last_name');
             $table->string('email')->unique();
             $table->string('gender')->nullable();
-            $table->string('profile_picture')->nullable();
+            $table->string('profile_picture')->default('no_image');
             $table->timestamps();
         });
     }

@@ -142,7 +142,7 @@ class EmployeeController extends Controller
             $fileNameToStore = $filename.'_'.time().'.'.$extension;
             // Upload Image 
             $request->file('photo')->storeAs('public/profile_pictures', $fileNameToStore);
-            if($emp->profile_picture != null)
+            if($emp->profile_picture !=  "no_image")
             {
                 unlink(storage_path('app/public/profile_pictures/'.$emp->profile_picture));
             }
@@ -178,7 +178,7 @@ class EmployeeController extends Controller
     public function destroy($id)
     {
         $emp = Employee::find($id);
-        if($emp->profile_picture != null)
+        if($emp->profile_picture != "no_image")
             unlink(storage_path('app/public/profile_pictures/'.$emp->profile_picture));
         $emp->delete();
         return back()->with('success','Deleted!');
@@ -345,6 +345,7 @@ class EmployeeController extends Controller
             "profile_picture"=> $record->profile_picture,
             "hobbies"=>$hobbies,
             "created_at"=> $record->created_at,
+            "actions"=>$record->id
             );
         }
 

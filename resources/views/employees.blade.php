@@ -65,6 +65,7 @@
                                 <th>Gender</th>
                                 <th>Hobbies</th>
                                 <th>Created At</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tfoot>
@@ -77,6 +78,7 @@
                                 <th>Gender</th>
                                 <th>Hobbies</th>
                                 <th>Created At</th>
+                                <th>Actions</th>
                             </tr>
                         </tfoot>
                     </table><hr>
@@ -106,7 +108,8 @@
                 { "data": "email" },
                 { "data": "gender" },
                 { "data": "hobbies" },
-                { "data": "created_at" }
+                { "data": "created_at" },
+                { "data": "actions" }
             ],
             "columnDefs": [
                 { 
@@ -119,10 +122,27 @@
                             return data
                     }
                 },
+                { 
+                    targets: 8,
+                    render: function(data) {
+                            return '<a class="btn btn-primary" href="/employees/'+data+'" style="height: 27px;padding:2px 4px 3px 4px">Show</a><br><br>\
+                                    <a class="btn btn-success delete" href="/employees/'+data+'/edit" style="height: 27px;padding:2px 4px 3px 4px">Edit</a><br><br>\
+                                    <form method="post" action="/employees/'+data+'"> \
+                                        @csrf\
+                                        <input type="hidden" name="_method" value="DELETE">\
+                                        <button type="submit" class="btn btn-danger delete" style="height: 27px;padding:2px 4px 3px 4px">Delete</button>\
+                                    </form>'
+                    }
+                },
+                {
+                    'targets': [1,6,8],
+                    'orderable': false,
+                }
             ]
         });
     });
-    $(".delete").on("click", function(){
+
+    $("#dataTable").delegate("tbody > tr > td > .delete","click", function(){
         return confirm("Are you sure?");
     });
 

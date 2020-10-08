@@ -21,8 +21,12 @@ Route::get('/', function () {
 Auth::routes(); 
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/employees/import','Employee\EmployeeController@importCSV')->middleware('auth');
-Route::post('/employees/import/save','Employee\EmployeeController@saveCSVData')->name('employees.saveCSVData')->middleware('auth');
-Route::post('/employees/dataTable','Employee\EmployeeController@dataTable')->name('employees.data');
-Route::resource('employees','Employee\EmployeeController')->middleware('auth');
+
+//Employees Routes
+Route::middleware('auth')->namespace('Employee')->group(function () {
+    Route::get('/employees/import','EmployeeController@importCSV');
+    Route::post('/employees/import/save','EmployeeController@saveCSVData')->name('employees.saveCSVData');
+    Route::post('/employees/dataTable','EmployeeController@dataTable')->name('employees.data');
+    Route::resource('employees','EmployeeController');
+});
 
