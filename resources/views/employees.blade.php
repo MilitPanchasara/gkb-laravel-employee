@@ -9,7 +9,7 @@
                 <div class="card-header">{{ __('Employees') }}</div>
 
                 <div class="card-body">
-                    <table class="table table-bordered" id="employeeTable">
+                    {{-- <table class="table table-bordered" id="employeeTable">
                         <thead>
                             <tr class="bg-dark text-light">
                                 <th>ID</th>
@@ -53,31 +53,33 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <hr> 
+                    <hr>  --}}
                     <table class="table table-bordered" id="dataTable">
                         <thead>
                             <tr class="bg-dark text-light">
                                 <th>ID</th>
+                                <th>Profile Picture</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>E-mail</th>
                                 <th>Gender</th>
-                                <th>Profile Picture</th>
+                                <th>Hobbies</th>
                                 <th>Created At</th>
                             </tr>
                         </thead>
                         <tfoot>
                             <tr class="bg-dark text-light">
                                 <th>ID</th>
+                                <th>Profile Picture</th>
                                 <th>First Name</th>
                                 <th>Last Name</th>
                                 <th>E-mail</th>
                                 <th>Gender</th>
-                                <th>Profile Picture</th>
+                                <th>Hobbies</th>
                                 <th>Created At</th>
                             </tr>
                         </tfoot>
-                    </table>
+                    </table><hr>
                 </div>
             </div>
         </div>
@@ -94,21 +96,32 @@
             "ajax" : {
                 "url" : "/employees/dataTable",
                 "type" : "POST",
-                "dataSrc": ""
+                "data": "data",
             },
             "columns": [
                 { "data": "id" },
+                { "data": "profile_picture" },
                 { "data": "first_name" },
                 { "data": "last_name" },
                 { "data": "email" },
                 { "data": "gender" },
-                { "data": "profile_picture" },
-                { "data": "created_at" },
-                { "data": "updated_at" }
+                { "data": "hobbies" },
+                { "data": "created_at" }
+            ],
+            "columnDefs": [
+                { 
+                    targets: 1,
+                    render: function(data) {
+                        
+                        if(data != "no_image")
+                            return '<img src="/storage/profile_pictures/'+data+'"  height="100px" width="100px">'
+                        else 
+                            return data
+                    }
+                },
             ]
         });
     });
-
     $(".delete").on("click", function(){
         return confirm("Are you sure?");
     });

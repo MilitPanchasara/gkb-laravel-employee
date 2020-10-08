@@ -121,7 +121,7 @@ class EmployeeController extends Controller
         $emp = Employee::find($id);
         $emp->first_name = $request->fname;
         $emp->last_name = $request->lname;
-        $if_exist = Employee::where('email',$request->email)->get();
+        $if_exist = Employee::where('email',$request->email)->where('id','<>',$id)->get();
         if($if_exist->count() != 0){
             return back()->withInput()->with('error','E-mail already exists.');
         }
@@ -294,10 +294,66 @@ class EmployeeController extends Controller
 
     public function dataTable(Request $request)
     {
-        $employees = Employee::all();
-        $empJSON = $employees->toJson();
-        return json_encode([
-            'data'=>$empJSON
-        ]);
+        $draw = $request->draw;
+        $start = $request->start;
+        $rowperpage = $request->length;
+
+        $columnIndex_arr = $request->order;
+        $columnName_arr = $request->columns;
+        $order_arr = $request->order;
+        $search_arr = $request->search;
+
+        $columnIndex = $columnIndex_arr[0]['column'];
+        $columnName = $columnName_arr[$columnIndex]['data'];
+        $columnSortOrder = $order_arr[0]['dir'];
+        $searchValue = $search_arr['value']; 
+
+        // Total records
+        $totalRecords = Employee::select('count(*) as allcount')->count();
+        $totalRecordswithFilter = Employee::select('count(*) as allcount')  
+        ->where('first_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('last_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('email', 'like', '%' .$searchValue . '%')
+        ->orWhere('id', 'like', '%' .$searchValue . '%')
+        ->count();
+
+        // Fetch records
+        $records = Employee::orderBy($columnName,$columnSortOrder)
+        ->where('first_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('last_name', 'like', '%' .$searchValue . '%')
+        ->orWhere('email', 'like', '%' .$searchValue . '%')
+        ->orWhere('id', 'like', '%' .$searchValue . '%')
+        ->select('employees.*')
+        ->skip($start)
+        ->take($rowperpage)
+        ->get();
+
+        $data_arr = array();
+        
+        foreach($records as $record){
+            $id = $record->id;
+            $fname = $record->first_name;
+            $lname = $record->last_name;
+            $email = $record->email;
+            $hobbies = $record->hobbies()->pluck('hobby');
+            $data_arr[] = array(
+            "id" => $id,
+            "first_name" => $fname,
+            "last_name" => $lname,
+            "email" => $email,
+            "gender" => $record->gender,
+            "profile_picture"=> $record->profile_picture,
+            "hobbies"=>$hobbies,
+            "created_at"=> $record->created_at,
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr
+        );
+        return json_encode($response);
     }
 }

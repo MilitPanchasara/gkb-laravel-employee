@@ -23,6 +23,6 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/employees/import','Employee\EmployeeController@importCSV')->middleware('auth');
 Route::post('/employees/import/save','Employee\EmployeeController@saveCSVData')->name('employees.saveCSVData')->middleware('auth');
-Route::post('/employees/dataTable','Employee\EmployeeController@dataTable')->name('employees.data')->middleware('auth');
+Route::post('/employees/dataTable','Employee\EmployeeController@dataTable')->name('employees.data');
 Route::resource('employees','Employee\EmployeeController')->middleware('auth');
 
