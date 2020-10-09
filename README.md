@@ -9,7 +9,7 @@
 
 ## About Employee Management
 
-Employee Management is the CRUD Application where you have many useful features, such as:
+Employees Management is the CRUD Application where you have many useful features, such as:
 
 - Adding Data manually or using CSV (Mass intertion).
 - Delete unnecessary records.
