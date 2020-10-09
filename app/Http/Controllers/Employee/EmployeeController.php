@@ -10,6 +10,7 @@ use Illuminate\Auth\Events\Failed;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class EmployeeController extends Controller
 {
@@ -25,6 +26,16 @@ class EmployeeController extends Controller
         return view('employees')->with('employees',$employees);
     }
 
+
+    protected function ValidateFormData($request)
+    {
+        $validatedData = $request->validate([
+            'first_name' => 'required|regex:/^[a-zA-Z ]+$/|max:255',
+            'last_name' => 'required|max:255',
+            'email' => 'required|unique:employees|max:255'
+        ]); 
+        return $validatedData;
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -43,6 +54,12 @@ class EmployeeController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request,[
+            'fname' => 'required|regex:/^[a-zA-Z ]+$/|max:255',
+            'lname' => 'required|regex:/^[a-zA-Z ]+$/|max:255',
+            'email' => 'required|unique:employees|max:255|email'
+        ]);
+
         $new_emp = new Employee();
         $new_emp->first_name = $request->fname;
         $new_emp->last_name = $request->lname;
@@ -118,6 +135,11 @@ class EmployeeController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request,[
+            'fname' => 'required|regex:/^[a-zA-Z ]+$/|max:255',
+            'lname' => 'required|regex:/^[a-zA-Z ]+$/|max:255',
+            'email' => 'required|max:255|email'
+        ]);
         $emp = Employee::find($id);
         $emp->first_name = $request->fname;
         $emp->last_name = $request->lname;
@@ -181,7 +203,7 @@ class EmployeeController extends Controller
         if($emp->profile_picture != "no_image")
             unlink(storage_path('app/public/profile_pictures/'.$emp->profile_picture));
         $emp->delete();
-        return back()->with('success','Deleted!');
+        return redirect('/employees')->with('success','Deleted!');
     }
 
     public function importCSV()
@@ -344,7 +366,7 @@ class EmployeeController extends Controller
             "gender" => $record->gender,
             "profile_picture"=> $record->profile_picture,
             "hobbies"=>$hobbies,
-            "created_at"=> $record->created_at,
+            "created_at"=> $record->created_at->format('d, M., Y'),
             "actions"=>$record->id
             );
         }

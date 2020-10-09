@@ -17,7 +17,7 @@ class ViewEmployeeTest extends TestCase
     public function testWithAuthenticationButNotSignedIn()
     {
         $response = $this->get('/employees/1');
-        $response->assertStatus(302);
+        $response->assertRedirect('/login');
     }
 
     public function testWithAuthenticationAndSignedIn()

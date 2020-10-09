@@ -146,5 +146,9 @@
         return confirm("Are you sure?");
     });
 
+    $("#dataTable").delegate("tbody > tr > td > form > .delete","click", function(){
+        return confirm("Are you sure?");
+    });
+
 </script>
 @endsection
